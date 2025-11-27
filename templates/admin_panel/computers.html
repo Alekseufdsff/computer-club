@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h2 class="text-warning mb-4">💻 Управление компьютерами</h2>
+        
+        <div class="card custom-card mb-4">
+            <div class="card-header">
+                <h5 class="text-warning">Добавить новый компьютер</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-white">Название компьютера</label>
+                            {{ form.name }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-white">Статус</label>
+                            {{ form.status }}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-white">Характеристики</label>
+                        {{ form.specifications }}
+                    </div>
+                    <div class="mb-3 form-check">
+                        {{ form.is_public }}
+                        <label class="form-check-label text-white">Публичный доступ</label>
+                    </div>
+                    <button type="submit" class="btn btn-warning">➕ Добавить компьютер</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card custom-card">
+            <div class="card-header">
+                <h5 class="text-warning">📊 Статистика</h5>
+            </div>
+            <div class="card-body">
+                <div class="stats-info">
+                    <div class="mb-3">
+                        <span class="text-white">Всего компьютеров:</span>
+                        <span class="badge bg-warning float-end">{{ computers.count }}</span>
+                    </div>
+                    <div class="mb-3">
+                        <span class="text-white">Свободно:</span>
+                        <span class="badge bg-success float-end">{{ free_count|default:"0" }}</span>
+                    </div>
+                    <div class="mb-3">
+                        <span class="text-white">Занято:</span>
+                        <span class="badge bg-danger float-end">{{ busy_count|default:"0" }}</span>
+                    </div>
+                    <div class="mb-3">
+                        <span class="text-white">Публичных:</span>
+                        <span class="badge bg-info float-end">{{ public_count|default:"0" }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card custom-card mt-4">
+    <div class="card-header">
+        <h5 class="text-warning">Список всех компьютеров</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover">
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Владелец</th>
+                        <th>Статус</th>
+                        <th>Доступ</th>
+                        <th>Дата добавления</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for computer in computers %}
+                    <tr>
+                        <td class="text-white">{{ computer.name }}</td>
+                        <td>{{ computer.owner.username }}</td>
+                        <td>
+                            <span class="badge {% if computer.status == 'free' %}bg-success{% else %}bg-danger{% endif %}">
+                                {{ computer.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge {% if computer.is_public %}bg-info{% else %}bg-secondary{% endif %}">
+                                {% if computer.is_public %}Публичный{% else %}Приватный{% endif %}
+                            </span>
+                        </td>
+                        <td class="text-muted">{{ computer.created_at|date:"d.m.Y" }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-warning">✏️</button>
+                                <button class="btn btn-outline-danger">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

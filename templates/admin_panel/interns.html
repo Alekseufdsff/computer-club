@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="text-warning mb-4">🎯 Руководство стажёрами</h2>
+        
+        <div class="card custom-card mb-4">
+            <div class="card-header">
+                <h5 class="text-warning">Добавить задание стажёру</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label text-white">Название задания</label>
+                        {{ form.title }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-white">Описание задания</label>
+                        {{ form.description }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-white">Назначить стажёру</label>
+                        {{ form.assigned_to }}
+                    </div>
+                    <button type="submit" class="btn btn-warning">🎯 Назначить задание</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card custom-card">
+            <div class="card-header">
+                <h5 class="text-warning">Список стажёров</h5>
+            </div>
+            <div class="card-body">
+                {% for intern in interns %}
+                <div class="intern-item mb-3 p-3 border-bottom">
+                    <h6 class="text-white">{{ intern.username }}</h6>
+                    <p class="text-muted small">Email: {{ intern.email|default:"Не указан" }}</p>
+                    <p class="text-muted small">Зарегистрирован: {{ intern.date_joined|date:"d.m.Y" }}</p>
+                </div>
+                {% empty %}
+                <p class="text-muted text-center">Стажёров пока нет</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card custom-card mt-4">
+    <div class="card-header">
+        <h5 class="text-warning">📋 Активные задания</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover">
+                <thead>
+                    <tr>
+                        <th>Задание</th>
+                        <th>Стажёр</th>
+                        <th>Дата назначения</th>
+                        <th>Статус</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in tasks %}
+                    <tr>
+                        <td>
+                            <strong class="text-white">{{ task.title }}</strong>
+                            <p class="text-muted small mb-0">{{ task.description|truncatewords:10 }}</p>
+                        </td>
+                        <td class="text-white">{{ task.assigned_to.username }}</td>
+                        <td class="text-muted">{{ task.created_at|date:"d.m.Y H:i" }}</td>
+                        <td>
+                            <span class="badge {% if task.is_completed %}bg-success{% else %}bg-warning{% endif %}">
+                                {% if task.is_completed %}Выполнено{% else %}В работе{% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-warning">✏️</button>
+                                <button class="btn btn-outline-success">✓</button>
+                                <button class="btn btn-outline-danger">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">Заданий пока нет</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

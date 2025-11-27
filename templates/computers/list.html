@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-warning">💻 Игровые компьютеры</h2>
+    <span class="badge bg-warning text-dark">{{ computers.count }} доступно</span>
+</div>
+
+<div class="row">
+    {% for computer in computers %}
+    <div class="col-md-6 mb-4">
+        <div class="card custom-card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0 text-white">{{ computer.name }}</h5>
+                <span class="badge {% if computer.status == 'free' %}bg-success{% else %}bg-danger{% endif %}">
+                    {{ computer.get_status_display }}
+                </span>
+            </div>
+            <div class="card-body">
+                <p class="card-text text-light"><strong>Характеристики:</strong><br>{{ computer.specifications|linebreaks }}</p>
+                <p class="card-text"><small class="text-muted">Владелец: {{ computer.owner.username }}</small></p>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'computer_detail' computer.id %}" class="btn btn-outline-warning btn-sm">
+                        ℹ️ Подробнее
+                    </a>
+                    {% if computer.status == 'free' %}
+                    <a href="{% url 'request_computer' computer.id %}" class="btn btn-warning btn-sm">
+                        🎯 Забронировать
+                    </a>
+                    {% else %}
+                    <button class="btn btn-secondary btn-sm" disabled>Занято</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-dark text-center">
+            😔 Пока нет доступных компьютеров
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

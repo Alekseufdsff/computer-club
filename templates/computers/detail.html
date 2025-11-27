@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card custom-card">
+            <div class="card-header">
+                <h3 class="text-warning">{{ computer.name }}</h3>
+            </div>
+            <div class="card-body">
+                <h5 class="text-white">⚙️ Характеристики:</h5>
+                <div class="specs-box p-3 mb-3">
+                    {{ computer.specifications|linebreaks }}
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong class="text-white">Владелец:</strong>
+                        <span class="text-light">{{ computer.owner.username }}</span>
+                    </div>
+                    <div class="col-md-6">
+                        <strong class="text-white">Статус:</strong>
+                        <span class="badge {% if computer.status == 'free' %}bg-success{% else %}bg-danger{% endif %}">
+                            {{ computer.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong class="text-white">Доступность:</strong>
+                        <span class="text-light">
+                            {% if computer.is_public %}Публичный{% else %}Приватный{% endif %}
+                        </span>
+                    </div>
+                    <div class="col-md-6">
+                        <strong class="text-white">Добавлен:</strong>
+                        <span class="text-light">{{ computer.created_at|date:"d.m.Y" }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'computers_list' %}" class="btn btn-outline-warning">← Назад к списку</a>
+                    {% if computer.status == 'free' %}
+                    <a href="{% url 'request_computer' computer.id %}" class="btn btn-warning">
+                        🎯 Забронировать этот компьютер
+                    </a>
+                    {% else %}
+                    <button class="btn btn-secondary" disabled>Компьютер занят</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

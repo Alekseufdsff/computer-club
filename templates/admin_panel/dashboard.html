@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="admin-dashboard">
+    <h2 class="text-warning mb-4">👑 Панель администратора</h2>
+    
+    <!-- Статистика -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card stat-card bg-dark text-white">
+                <div class="card-body text-center">
+                    <h3>{{ users.count }}</h3>
+                    <p>👥 Пользователей</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card bg-dark text-white">
+                <div class="card-body text-center">
+                    <h3>{{ computers.count }}</h3>
+                    <p>💻 Компьютеров</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card bg-dark text-white">
+                <div class="card-body text-center">
+                    <h3>{{ requests.count }}</h3>
+                    <p>📨 Новых заявок</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card bg-dark text-white">
+                <div class="card-body text-center">
+                    <h3>{{ intern_tasks.count }}</h3>
+                    <p>📋 Заданий стажёрам</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Быстрые ссылки -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card custom-card">
+                <div class="card-header">
+                    <h5 class="text-warning">🚀 Быстрый доступ</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{% url 'admin_users' %}" class="btn btn-outline-warning">👥 Управление пользователями</a>
+                        <a href="{% url 'admin_computers' %}" class="btn btn-outline-warning">💻 Управление компьютерами</a>
+                        <a href="{% url 'admin_news' %}" class="btn btn-outline-warning">📢 Управление новостями</a>
+                        <a href="{% url 'admin_tariffs' %}" class="btn btn-outline-warning">💰 Управление тарифами</a>
+                        <a href="{% url 'admin_interns' %}" class="btn btn-outline-warning">🎯 Руководство стажёрами</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Новые заявки -->
+    {% if requests %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card custom-card">
+                <div class="card-header">
+                    <h5 class="text-warning">📨 Новые заявки на компьютеры</h5>
+                </div>
+                <div class="card-body">
+                    {% for req in requests %}
+                    <div class="request-item mb-3 p-3 border-bottom">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <strong class="text-white">{{ req.user.username }}</strong>
+                                <span class="text-muted">запрашивает</span>
+                                <strong class="text-warning">{{ req.computer.name }}</strong>
+                            </div>
+                            <form method="post" action="{% url 'process_request' req.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success btn-sm">✅ Обработать</button>
+                            </form>
+                        </div>
+                        {% if req.message %}
+                        <p class="text-light mt-2"><small>{{ req.message }}</small></p>
+                        {% endif %}
+                        <small class="text-muted">{{ req.created_at|timesince }} назад</small>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Последние действия -->
+        <div class="col-md-6">
+            <div class="card custom-card">
+                <div class="card-header">
+                    <h5 class="text-warning">📊 Последние действия</h5>
+                </div>
+                <div class="card-body">
+                    <div class="activity-item mb-2">
+                        <span class="text-success">✓</span>
+                        <span class="text-white">Зарегистрирован новый пользователь</span>
+                        <small class="text-muted">5 мин назад</small>
+                    </div>
+                    <div class="activity-item mb-2">
+                        <span class="text-warning">⚡</span>
+                        <span class="text-white">Добавлен новый компьютер</span>
+                        <small class="text-muted">1 час назад</small>
+                    </div>
+                    <div class="activity-item mb-2">
+                        <span class="text-info">📢</span>
+                        <span class="text-white">Опубликована новость</span>
+                        <small class="text-muted">2 часа назад</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

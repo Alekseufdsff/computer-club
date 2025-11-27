@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="text-warning mb-4">💰 Управление тарифами</h2>
+        
+        <div class="card custom-card">
+            <div class="card-header">
+                <h5 class="text-warning">Добавить тариф</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-white">Название тарифа</label>
+                            {{ form.name }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-white">Цена (руб/час)</label>
+                            {{ form.price }}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-white">Описание</label>
+                        {{ form.description }}
+                    </div>
+                    <div class="mb-3 form-check">
+                        {{ form.is_active }}
+                        <label class="form-check-label text-white">Активный тариф</label>
+                    </div>
+                    <button type="submit" class="btn btn-warning">💳 Добавить тариф</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card custom-card">
+            <div class="card-header">
+                <h5 class="text-warning">Список тарифов</h5>
+            </div>
+            <div class="card-body">
+                {% for tariff in tariffs %}
+                <div class="tariff-item mb-3 p-3 border-bottom">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="text-white">{{ tariff.name }}</h6>
+                            <h5 class="text-warning">{{ tariff.price }} ₽/час</h5>
+                            <p class="text-light small mb-2">{{ tariff.description }}</p>
+                        </div>
+                        <span class="badge {% if tariff.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                            {% if tariff.is_active %}Активен{% else %}Неактивен{% endif %}
+                        </span>
+                    </div>
+                    <div class="mt-2">
+                        <button class="btn btn-sm btn-outline-warning">✏️ Редактировать</button>
+                        <button class="btn btn-sm btn-outline-danger">🗑️ Удалить</button>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted text-center">Тарифов пока нет</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

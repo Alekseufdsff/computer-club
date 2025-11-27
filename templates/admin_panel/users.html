@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-warning">👥 Управление пользователями</h2>
+</div>
+
+<div class="card custom-card">
+    <div class="card-header">
+        <h5 class="text-warning">Список пользователей</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Логин</th>
+                        <th>Email</th>
+                        <th>Роль</th>
+                        <th>Дата регистрации</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td class="text-white">{{ user.username }}</td>
+                        <td>{{ user.email|default:"Не указан" }}</td>
+                        <td>
+                            <form method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="user_id" value="{{ user.id }}">
+                                <select name="role" class="form-select form-select-sm" onchange="this.form.submit()">
+                                    <option value="user" {% if user.userprofile.role == 'user' %}selected{% endif %}>Пользователь</option>
+                                    <option value="intern" {% if user.userprofile.role == 'intern' %}selected{% endif %}>Стажёр</option>
+                                    <option value="admin" {% if user.userprofile.role == 'admin' %}selected{% endif %}>Администратор</option>
+                                </select>
+                            </form>
+                        </td>
+                        <td class="text-muted">{{ user.date_joined|date:"d.m.Y" }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-warning">Просмотр</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card custom-card">
+            <div class="card-header">
+                <h6 class="text-warning">📊 Статистика по ролям</h6>
+            </div>
+            <div class="card-body">
+                <div class="role-stats">
+                    <div class="mb-2">
+                        <span class="text-white">Администраторы:</span>
+                        <span class="badge bg-warning float-end">{{ admin_count|default:"0" }}</span>
+                    </div>
+                    <div class="mb-2">
+                        <span class="text-white">Стажёры:</span>
+                        <span class="badge bg-info float-end">{{ intern_count|default:"0" }}</span>
+                    </div>
+                    <div class="mb-2">
+                        <span class="text-white">Пользователи:</span>
+                        <span class="badge bg-secondary float-end">{{ user_count|default:"0" }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

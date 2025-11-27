@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card custom-card">
+            <div class="card-header text-warning">
+                <h4>🔐 Вход в систему</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="username" class="form-label text-white">Логин:</label>
+                        <input type="text" class="form-control custom-input" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label text-white">Пароль:</label>
+                        <input type="password" class="form-control custom-input" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-warning w-100">Войти</button>
+                </form>
+                <div class="mt-3 text-center">
+                    <a href="{% url 'register' %}" class="text-warning">Нет аккаунта? Зарегистрируйтесь!</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
